@@ -1,15 +1,5 @@
 package com.minhld.job2p.jobs;
 
-import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
-import android.widget.Toast;
-
 import com.minhld.job2p.com.minhld.extra.WebPart;
 import com.minhld.job2p.supports.Utils;
 
@@ -45,6 +35,7 @@ public class Job {
      */
     public Object exec(Object input) {
         WebPart webPart = (WebPart) input;
+        byte[] result = new byte[0];
 
         // create a zip output
         String anyFileName = UUID.randomUUID().toString() + ".zip";
@@ -88,12 +79,14 @@ public class Job {
             zipOut.flush();
             zipOut.close();
 
+            result = Utils.readFile(new File(anyPath));
+
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+
         }
 
-        return anyFileName;
+        return result;
     }
 
     /**

@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Utils.MAIN_JOB_DONE: {
+                    // when partial job is completed at client & full job is completed at server
+                    // showing content here
 
                     break;
                 }

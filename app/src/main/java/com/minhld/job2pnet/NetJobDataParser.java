@@ -4,9 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
+import com.minhld.job2p.com.minhld.extra.WebPart;
 import com.minhld.job2p.jobs.JobDataParser;
+import com.minhld.job2p.supports.Utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * GPS data parser
@@ -27,49 +33,76 @@ public class NetJobDataParser implements JobDataParser {
 
     @Override
     public Object parseBytesToObject(byte[] byteData) throws Exception {
-        return BitmapFactory.decodeByteArray(byteData, 0, byteData.length);
+        WebPart webPart = (WebPart) Utils.deserialize(byteData);
+        return webPart;
     }
 
     @Override
     public byte[] parseObjectToBytes(Object objData) throws Exception {
-        Bitmap bmpData = (Bitmap) objData;
-
-        // assign the binary data
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bmpData.compress(Bitmap.CompressFormat.JPEG, 0, bos);
-        byte[] byteData = bos.toByteArray();
-        bos.close();
-
-        return byteData;
+        // it is already binary array
+        return (byte[]) objData;
     }
 
     @Override
     public Object getSinglePart(Object data, int numOfParts, int index) {
-        Bitmap bmpData = (Bitmap) data;
-        int pieceWidth = bmpData.getWidth() / numOfParts;
-        return Bitmap.createBitmap(bmpData, (pieceWidth * index), 0, pieceWidth, bmpData.getHeight());
+        WebPart webPart = new WebPart();
+        webPart.url = (String) data;
+        webPart.numOfParts = numOfParts;
+        webPart.index = index;
+        return webPart;
     }
 
     @Override
     public String getJsonMetadata(Object objData) {
-        Bitmap bmp = (Bitmap) objData;
-        return "{ 'width': " + bmp.getWidth() + ", 'height': " + bmp.getHeight() + " }";
+        // return the folder name for the placeholder, which will be
+        // located inside the Download folder
+        return "web";
     }
 
     @Override
     public Object createPlaceholder(String jsonMetadata) {
-        return "";
+        // the place holder will be an empty folder
+        // delete the placeholder if it is already there
+        String placeholderPath = Utils.getDownloadPath() + jsonMetadata;
+        File f = new File(placeholderPath);
+        if (f.exists()) {
+            try {
+                Utils.delete(f);
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // create the placeholder
+        f.mkdir();
+
+        return placeholderPath;
     }
 
     @Override
     public Object copyPartToPlaceholder(Object placeholderObj, byte[] partObj, int index) {
-        // get bitmap from original data
-        Bitmap partBmp = BitmapFactory.decodeByteArray(partObj, 0, partObj.length);
+        String placeholderPath = (String) placeholderObj;
 
-        int pieceWidth = partBmp.getWidth();
-        Canvas canvas = new Canvas((Bitmap) placeholderObj);
-        canvas.drawBitmap(partBmp, index * pieceWidth, 0, null);
-        return null;
+        // save to a file
+        String uuid = UUID.randomUUID().toString();
+        String tempZipPath = Utils.getDownloadPath() + "/" + uuid + ".zip";
+
+        try {
+            FileOutputStream fos = new FileOutputStream(tempZipPath);
+            fos.write(partObj, 0, partObj.length);
+            fos.flush();
+            fos.close();
+
+            Utils.unzipFile(tempZipPath, placeholderPath, false);
+
+            // delete the tempo ZIP file
+            Utils.delete(new File(tempZipPath));
+        } catch(Exception e) {
+
+        }
+
+        // return
+        return placeholderPath;
     }
 
     @Override
