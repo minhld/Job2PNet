@@ -3,6 +3,8 @@ package com.minhld.job2p.supports;
 import android.content.Context;
 import android.os.Environment;
 
+import com.minhld.job2p.jobs.Job;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -109,16 +111,21 @@ public class Utils {
             throw new Exception("job or data file does not exist");
         }
 
-        // address the class object and its executable method
-        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
-        ClassLoader parent  = c.getClass().getClassLoader();
-        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
-        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
-        Object o = jobClass.newInstance();
-        Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
+//        // address the class object and its executable method
+//        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
+//        ClassLoader parent  = c.getClass().getClassLoader();
+//        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
+//        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
+//        Object o = jobClass.newInstance();
+//        Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
+//
+//        // address the resource
+//        return m.invoke(o, srcObject);
 
-        // address the resource
-        return m.invoke(o, srcObject);
+        // this is urgent case so that we wont use DexClassLoader
+        // we will use Job object directly
+        return new Job().exec(srcObject);
+
     }
 
     /**
