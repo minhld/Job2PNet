@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                     // when partial job is completed at client & full job is completed at server
                     // showing content here
                     String path = (String) msg.obj;
-
+                    // /storage/emulated/0/Download/web
                     break;
                 }
                 case Utils.MAIN_INFO: {

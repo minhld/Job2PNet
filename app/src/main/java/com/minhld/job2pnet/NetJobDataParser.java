@@ -28,7 +28,7 @@ public class NetJobDataParser implements JobDataParser {
 
     @Override
     public Object readFile(String path) throws Exception {
-        return "http://vnexpress.net/photo/thoi-su/nguoi-viet-nam-lan-dau-di-bau-cu-70-nam-truoc-3338003.html";
+        return "http://giaitri.vnexpress.net/photo/trong-nuoc/buoi-toi-dam-am-cua-gia-dinh-my-linh-3339639.html";
     }
 
     @Override
@@ -39,7 +39,11 @@ public class NetJobDataParser implements JobDataParser {
 
     @Override
     public byte[] parseObjectToBytes(Object objData) throws Exception {
-        return Utils.serialize(objData);
+        if (objData instanceof byte[]) {
+            return (byte[]) objData;
+        } else {
+            return Utils.serialize(objData);
+        }
     }
 
     @Override
@@ -62,7 +66,7 @@ public class NetJobDataParser implements JobDataParser {
     public Object createPlaceholder(String jsonMetadata) {
         // the place holder will be an empty folder
         // delete the placeholder if it is already there
-        String placeholderPath = Utils.getDownloadPath() + jsonMetadata;
+        String placeholderPath = Utils.getDownloadPath() + "/" + jsonMetadata;
         File f = new File(placeholderPath);
         if (f.exists()) {
             try {

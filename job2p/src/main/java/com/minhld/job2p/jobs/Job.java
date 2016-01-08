@@ -56,6 +56,9 @@ public class Job {
             int step = webPart.numOfParts == 1 ? linksSize : linksSize / webPart.numOfParts + 1;
             int offs = step * webPart.index;
 
+            // write a small piece of metadata
+            writeZip(zipOut, linksSize + "_" + step + "_" + offs, "link: " + webPart.url + "\nstep: " + step + ", offset: " + offs);
+
             int cnt = 0;
             for (String lnkKey : links.keySet()) {
                 if (cnt < offs) {
@@ -69,6 +72,7 @@ public class Job {
                         writeZip(zipOut, lnkKey, new URL(links.get(lnkKey)).openStream());
                     } catch(Exception e) {
                         // skip one resource, no problem
+                        e.printStackTrace();
                     }
                     cnt++;
                 }else {
