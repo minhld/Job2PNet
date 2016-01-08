@@ -28,7 +28,7 @@ public class NetJobDataParser implements JobDataParser {
 
     @Override
     public Object readFile(String path) throws Exception {
-        return "";
+        return "http://vnexpress.net/photo/thoi-su/nguoi-viet-nam-lan-dau-di-bau-cu-70-nam-truoc-3338003.html";
     }
 
     @Override
@@ -39,8 +39,7 @@ public class NetJobDataParser implements JobDataParser {
 
     @Override
     public byte[] parseObjectToBytes(Object objData) throws Exception {
-        // it is already binary array
-        return (byte[]) objData;
+        return Utils.serialize(objData);
     }
 
     @Override

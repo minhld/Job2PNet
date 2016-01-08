@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 case Utils.MAIN_JOB_DONE: {
                     // when partial job is completed at client & full job is completed at server
                     // showing content here
+                    String path = (String) msg.obj;
 
                     break;
                 }
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // 2. dispatch jobs to clients
                 String downloadPath = Utils.getDownloadPath();
-                String dataPath = "";   // we don't need extra data
+                String dataPath = downloadPath + "/mars.jpg";   // we don't need extra data
                 String jobPath = downloadPath + "/Job.jar";
                 jobHandler.dispatchJob(useCluster, dataPath, jobPath);
             }

@@ -67,7 +67,7 @@ public class JobDispatcher extends AsyncTask {
                     if (this.useCluster) {
                         if (i == 0) {
                             // do it at server
-                            this.socketHandler.obtainMessage(Utils.MESSAGE_INFO, "[server] do own job #" + i);
+                            this.socketHandler.obtainMessage(Utils.MESSAGE_INFO, "[server] do own job #" + i).sendToTarget();
                             new Thread(new JobExecutor(this.context, this.socketHandler, dataParser, jobData)).start();
                         } else {
                             // dispatch this one to client to resolve it
