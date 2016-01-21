@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
                     // showing content here
                     String path = (String) msg.obj;
                     // /storage/emulated/0/Download/web
+
+                    // end of 1 thread
+                    long totalTime = System.currentTimeMillis() - startTime;
+                    UITools.writeLog(MainActivity.this, infoText, "end time: " + totalTime);
+
                     break;
                 }
                 case Utils.MAIN_INFO: {
